@@ -1,5 +1,6 @@
 import { Component, OnDestroy, OnInit } from '@angular/core';
 import { Subscription } from 'rxjs';
+import { Address } from 'src/app/models/address.model';
 import { AddressService } from 'src/app/services/address/address.service';
 import { ApiService } from 'src/app/services/api/api.service';
 import { GlobalService } from 'src/app/services/global/global.service';
@@ -11,7 +12,7 @@ import { GlobalService } from 'src/app/services/global/global.service';
 })
 export class AddressesPage implements OnInit ,OnDestroy{
   isLoading: boolean;
-  addresses: any[] =[];
+  addresses: Address[] =[];
   model: any = {
      title: 'No Addresses added yet',
      icon: 'location-outline' };
@@ -23,18 +24,7 @@ export class AddressesPage implements OnInit ,OnDestroy{
   ngOnInit() {
     this.addressesSub =this.addressesService.addresses.subscribe(address=>{
       console.log('addresses:',address);
-      if(address instanceof Array)
-      {this.addresses=address;}
-      else{
-        if(address?.delete){
-          this.addresses = this.addresses.filter(x =>x.id !== address.id);
-        }else if(address?.update){
-          const index = this.addresses.findIndex(x =>x.id !== address.id);
-          this.addresses[index] = address;
-        }else{
-          this.addresses = this.addresses.concat(address);
-        }
-        }
+      this.addresses =address;
     });
     this.getAdresses();
   }

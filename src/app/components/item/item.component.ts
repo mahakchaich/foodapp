@@ -1,4 +1,5 @@
 import { Component, Input, OnInit, Output ,EventEmitter} from '@angular/core';
+import { Item } from 'src/app/models/item.model';
 
 @Component({
   selector: 'app-item',
@@ -7,9 +8,9 @@ import { Component, Input, OnInit, Output ,EventEmitter} from '@angular/core';
 })
 export class ItemComponent implements OnInit {
 
-  @Input() item: any;
+  @Input() item: Item;
   @Input() index: any;
-  @Output() add: EventEmitter<any> = new EventEmitter();
+  @Output() add: EventEmitter<Item> = new EventEmitter();
   @Output() minus: EventEmitter<any> = new EventEmitter();
   constructor() { }
 
