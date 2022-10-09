@@ -7,6 +7,10 @@ const routes: Routes = [
   {
     path: '',
     component: AddressesPage
+  },
+  {
+    path: 'edit-address',
+    loadChildren: () => import('./edit-address/edit-address.module').then( m => m.EditAddressPageModule)
   }
 ];
 

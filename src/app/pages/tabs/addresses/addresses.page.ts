@@ -1,4 +1,5 @@
 import { Component, OnDestroy, OnInit } from '@angular/core';
+import { NavigationExtras, Router } from '@angular/router';
 import { Subscription } from 'rxjs';
 import { Address } from 'src/app/models/address.model';
 import { AddressService } from 'src/app/services/address/address.service';
@@ -19,7 +20,8 @@ export class AddressesPage implements OnInit ,OnDestroy{
   addressesSub: Subscription;
   constructor(private global: GlobalService,
               private api: ApiService,
-              private addressesService: AddressService) { }
+              private addressesService: AddressService,
+              private router: Router) { }
 
   ngOnInit() {
     this.addressesSub =this.addressesService.addresses.subscribe(address=>{
@@ -39,7 +41,15 @@ export class AddressesPage implements OnInit ,OnDestroy{
     },3000);
 
   }
-  editAddress(address){}
+  editAddress(address){
+    console.log(address);
+    const navData: NavigationExtras = {
+      queryParams: {
+        data: JSON.stringify(address)
+      }
+    };
+    this.router.navigate([this.router.url, 'edit-address'], navData);
+  }
    deleteAddress(address){
     console.log('address',address);
     this.global.showAlert(
