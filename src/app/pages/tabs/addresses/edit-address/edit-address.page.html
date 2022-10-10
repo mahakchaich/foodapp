@@ -1,7 +1,7 @@
 <ion-content fullscreen="true">
   <ion-toolbar slot="fixed">
     <ion-button slot="start" mode="md">
-      <ion-back-button defaultHref="/tabs/address"></ion-back-button>
+      <ion-back-button defaultHref="/tabs/addresses"></ion-back-button>
     </ion-button>
   </ion-toolbar>
   <div *ngIf="isLoading" class="ion-text-center alignSpinner">
@@ -17,7 +17,7 @@
     <ion-list>
       <ion-item lines="none">
         <ion-icon name="location-outline" color="dark" slot="start"></ion-icon>
-        <ion-label>{{location?.locationname}}</ion-label>
+        <ion-label>{{location?.location_name}}</ion-label>
         <ion-button slot="end" size="small" color="light">
          <span > CHANGE</span>
         </ion-button>
@@ -51,11 +51,10 @@
     </ion-list>
     <div class="ion-padding-horizontal">
       <ion-button *ngIf="!isSubmitted" expand="block" type="submit" color="primary" [disabled]="!form?.valid" (click)="onSubmit()">SAVE & PROCEED</ion-button>
-      <ion-button *ngIf="isSubmitted" expand="block"  color="primary"  >
+      <ion-button *ngIf="isSubmitted" expand="block"  color="primary">
         <ion-spinner name="crescent"></ion-spinner>
       </ion-button>
     </div>
-
   </form>
 
 </ion-content>

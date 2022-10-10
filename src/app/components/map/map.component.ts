@@ -10,21 +10,20 @@ import { LocationService } from 'src/app/services/location/location.service';
   templateUrl: './map.component.html',
   styleUrls: ['./map.component.scss'],
 })
-export class MapComponent implements OnInit, AfterViewInit ,OnDestroy {
+export class MapComponent implements OnInit ,AfterViewInit,OnDestroy {
   @ViewChild('map',{static: true}) mapElementRef: ElementRef;
   googleMaps: any;
   map: any;
   marker: any;
+  @Input() center ={lat:28.652571380345652  , lng:77.23231802197634};
   mapListener: any;
   @Input() update = false
   @Output() location: EventEmitter<any> = new EventEmitter();
-  @Input() center ={lat:35.71523495353111  , lng:10.66557691038677};
   constructor( private maps: GoogleMapsService,
                private renderer: Renderer2,
                private locationService: LocationService) { }
 
   ngOnInit() {
-
   }
 
   ngAfterViewInit(){
@@ -37,10 +36,10 @@ export class MapComponent implements OnInit, AfterViewInit ,OnDestroy {
       const position = await this.locationService.getCurrentLocation();
       this.center = {
         lat: position.coords.latitude,
-        lng: position.coords.longitude
+        lng: position.coords.longitude,
       };
       await this.loadMap();
-      this.getAddress(this.center.lat,this.center.lng);
+      // this.getAddress(this.center.lat,this.center.lng);
     }else{
       this.loadMap();
     }
@@ -50,33 +49,32 @@ export class MapComponent implements OnInit, AfterViewInit ,OnDestroy {
     }
   }
 
+
   async loadMap(){
     try{
-     let googleMaps: any =await this.maps.loadGoogleMaps();
-     this.googleMaps = googleMaps;
-     const mapEl= this.mapElementRef.nativeElement;
-     const location = new googleMaps.LatLng(this.center.lat,this.center.lng);
-     this.map= new googleMaps.Map(mapEl,{
-      center: location,
-      zoom: 15,
-        scaleControl: false,
-        streetViewControl: false,
-        zoomControl: false,
-        overviewMapControl: false,
-        mapTypeControl: false,
-        mapTypeControlOptions: {
-        mapTypeIds: [googleMaps.MapTypeId.ROADMAP, 'SwiggyClone']
-      }
+      let googleMaps: any =await this.maps.loadGoogleMaps();
+      this.googleMaps = googleMaps;
+      const mapEl= this.mapElementRef.nativeElement;
+      const location = new googleMaps.LatLng(this.center.lat,this.center.lng);
+      this.map= new googleMaps.Map(mapEl,{
+           center: location,
+           zoom: 15,
+           scaleControl: false,
+           streetViewControl: false,
+           zoomControl: false,
+           overviewMapControl: false,
+           mapTypeControl: false,
+           mapTypeControlOptions: {
+            mapTypeIds: [googleMaps.MapTypeId.ROADMAP, 'SwiggyClone']
+           }
       });
       const style= [{
-         featureType:'all',
-         elementType:'all',
-         stylers:[
-          {
-            saturation: -100
-          }
-         ]
-      }];
+            featureType:'all',
+            elementType:'all',
+            stylers:[
+                {saturation: -100}
+               ]
+            }];
       var mapType = new googleMaps.StyledMapType(style, { name: 'Grayscale' });
       this.map.mapTypes.set('SwiggyClone', mapType);
       this.map.setMapTypeId('SwiggyClone');
@@ -87,11 +85,12 @@ export class MapComponent implements OnInit, AfterViewInit ,OnDestroy {
     }
   }
 
-  addMarker(location) {
+
+  addMarker(location){
     let googleMaps: any = this.googleMaps;
     const icon = {
       url: 'assets/icons/location-pin.png',
-      scaledSize: new googleMaps.Size(50, 50), 
+      scaledSize: new googleMaps.Size(50, 50),
     };
     this.marker = new googleMaps.Marker({
       position: location,
@@ -105,15 +104,17 @@ export class MapComponent implements OnInit, AfterViewInit ,OnDestroy {
     });
   }
 
+
+
   async getAddress(lat, lng) {
     try {
       const result = await this.maps.getAddress(lat,lng);
       console.log(result);
       const loc = {
-        locationname: result.address_components[0].short_name,
+        location_name: result.address_components[0].short_name,
         address: result.formatted_address,
         lat,
-        lng
+        lng,
       };
       console.log(loc);
       this.location.emit(loc);

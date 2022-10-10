@@ -12,7 +12,6 @@ import { GlobalService } from 'src/app/services/global/global.service';
 })
 export class EditAddressPage implements OnInit {
   form: FormGroup;
-  // locationname: string = 'Locating...';
   isSubmitted = false;
   location: any ={};
   isLocationFetched: boolean;
@@ -44,7 +43,7 @@ export class EditAddressPage implements OnInit {
         this.location.lat = this.center.lat;
         this.location.lng = this.center.lng;
         this.location.address = address.address;
-        this.location.locationname = address.title;
+        this.location.location_name = address.title;
         this.id = address.id;
         setTimeout(async() => {
           await this.initForm(address);
@@ -86,7 +85,7 @@ export class EditAddressPage implements OnInit {
   fetchLocation(event){
     this.location = event;
     console.log('location',this.location);
-    this.isLocationFetched= true;
+    this.isLocationFetched=true;
   }
 
   toggleSubmit(){
@@ -105,27 +104,24 @@ export class EditAddressPage implements OnInit {
       this.toggleSubmit();
       return;
     }
-   const data ={
+     const data ={
     title: this.form.value.title,
     landmark: this.form.value.landmark,
     house: this.form.value.house,
-    address: this.form.value.address,
-    lat: this.form.value.lat,
-    lng: this.form.value.lng,
+    address: this.location.address,
+    lat: this.location.lat,
+    lng: this.location.lng,
    };
    console.log('address',data);
-   if(!this.id){await this.addressService.addAddresses(data);
-  }else{
+   if(!this.id){await this.addressService.addAddresses(data);}
+   else{
     await this.addressService.updateAddresses(this.id,data);
   }
    this.navCtrl.back();
-   this.toggleSubmit();
-
-   }catch(e){
-    console.log(e);
-    this.global.errorToast();
-
-   }
-  }
-
+     this.toggleSubmit();
+    }catch(e){
+      console.log(e);
+      this.global.errorToast();
+}
+}
 }

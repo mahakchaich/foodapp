@@ -44,6 +44,7 @@ export class GoogleMapsService {
         .pipe(
           map(geoData => {
             if(!geoData || !geoData.results || geoData.results.length === 0) {throw(null)};
+            console.log('location:',geoData.results[0]);
             return geoData.results[0];
           })
         ).subscribe(data => {
