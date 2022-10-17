@@ -7,7 +7,11 @@ const routes: Routes = [
   {
     path: '',
     component: CartPage
-  }
+  },
+  {
+    path: 'addresses',
+    loadChildren: () => import('../../../pages/tabs/addresses/addresses.module').then( m => m.AddressesPageModule)
+  },
 ];
 
 @NgModule({

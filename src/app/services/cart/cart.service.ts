@@ -29,14 +29,14 @@ export class CartService {
     return this.storage.getStorage('cart');
   }
 
-  async getCartData(){
+  async getCartData(val?){
     let data: any = await this.getCart();
     console.log(data);
     if(data?.value){
      this.model = await JSON.parse(data.value);
      console.log(this.model);
      await this.calculate();
-     this._cart.next(this.model);
+    if(!val) this._cart.next(this.model);
     }
   }
 
@@ -160,6 +160,55 @@ export class CartService {
     // this._cart.next(this.model);
   }
 
+  deg2rad(deg) {
+    return deg * (Math.PI/180);
+  }
 
+  getDistanceFromLatLngInKm(lat1, lng1, lat2, lng2) {
+    // 1mile = 1.6 km;
+    let radius = 6371; // Radius of earth in km
+    let lat = this.deg2rad(lat2 - lat1);
+    let lng = this.deg2rad(lng2 - lng1);
+
+    let result = Math.sin(lat/2) * Math.sin(lat/2) +
+                  Math.cos(this.deg2rad(lat1)) * Math.cos(this.deg2rad(lat2)) * 
+                  Math.sin(lng/2) * Math.sin(lng/2);
+                  var c = 2 * Math.atan2(Math.sqrt(result), Math.sqrt(1-result)); 
+                  var d = radius * c; // Distance in km
+                  console.log(d);
+                  return d;
+  }
+
+  async checkCart(lat1, lng1, radius) {
+    let distance: number;
+    // if(this.model?.restaurant) {
+    //   distance = this.getDistanceFromLatLngInKm(
+    //     lat1, 
+    //     lng1, 
+    //     this.model.restaurant.latitude, 
+    //     this.model.restaurant.longitude);
+    // } else {
+    //   await this.getCartData(1);
+    //   if(this.model?.restaurant) {
+    //     distance = this.getDistanceFromLatLngInKm(
+    //       lat1, 
+    //       lng1, 
+    //       this.model.restaurant.latitude, 
+    //       this.model.restaurant.longitude);
+    //   }
+    // }
+    await this.getCartData(1);
+    if(this.model?.restaurant) {
+      distance = this.getDistanceFromLatLngInKm(
+        lat1,
+        lng1,
+        this.model.restaurant.latitude, 
+        this.model.restaurant.longitude);
+        console.log('distance: ', distance);
+        if(distance > radius) {
+          return true;
+        } else return false;
+    } else return false;
+  }
 
 }

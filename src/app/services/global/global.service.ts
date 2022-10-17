@@ -15,10 +15,11 @@ isLoading: boolean =false ;
 setLoader(){
   this.isLoading =!this.isLoading;
 }
-showAlert(message: string ,header?, buttonArray?){
+showAlert(message: string ,header?, buttonArray?,inputs?){
   this.alertCtrl.create({
     header: header ? header : 'Authentication failed',
-    message: message ,
+    message: message,
+    inputs: inputs ? inputs : [],
     buttons: buttonArray ? buttonArray : ['oky'],
   })
   .then(alertEl =>alertEl.present());
@@ -88,4 +89,6 @@ getIcon(title){
     default: return 'location-outline';
   }
 }
+
+
 }

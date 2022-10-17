@@ -1,7 +1,8 @@
 <ion-header>
   <ion-toolbar mode="md">
-    <ion-title color="dark">
-      <span>Home</span>
+    <ion-title color="dark" (click)="searchLocation('select-place')">
+      <span *ngIf="location?.lat">{{location?.title}}</span>
+      <span *ngIf="!location || !location?.lat">Home</span>
       <ion-icon color="dark" name="chevron-down-outline"></ion-icon>
     </ion-title>
   </ion-toolbar>

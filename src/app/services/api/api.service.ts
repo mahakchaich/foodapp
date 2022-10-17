@@ -1,4 +1,5 @@
 import { Injectable } from '@angular/core';
+import { AngularFirestore } from '@angular/fire/compat/firestore';
 import { Address } from 'src/app/models/address.model';
 import { Category } from 'src/app/models/category.model';
 import { Item } from 'src/app/models/item.model';
@@ -9,6 +10,13 @@ import { Restaurant } from 'src/app/models/restaurant.model';
   providedIn: 'root'
 })
 export class ApiService {
+
+  constructor(private adb: AngularFirestore){}
+
+  collection(path) {
+    return this.adb.collection(path);
+  }
+
   banners=[
     {banner:'assets/imgs/1.jpg'},
     {banner:'assets/imgs/2.jpg'},
@@ -26,7 +34,9 @@ export class ApiService {
      rating:5,
      delivarytime:25,
      distance:2.5,
-     price:100
+     price:100,
+     latitude:28.652571380345652,
+     longitude:77.23231802197634,
     },
     {uid:'13',
     cover:'assets/imgs/2.jpg',
@@ -67,7 +77,9 @@ export class ApiService {
      ],
      rating:5,
      delivarytime:25,
-     price:100
+     price:100,
+     latitude:28.652571380345652,
+     longitude:77.23231802197634,
     },
     {uid:'13',
     cover:'assets/imgs/2.jpg',
@@ -163,7 +175,9 @@ export class ApiService {
      rating:5,
      delivarytime:25,
      distance:2.5,
-     price:100
+     price:100,
+     latitude:28.652571380345652,
+     longitude:77.23231802197634,
     },
     {uid:'13',
     cover:'assets/imgs/2.jpg',
@@ -269,5 +283,4 @@ export class ApiService {
     }
   ];
 
-  constructor() { }
   }

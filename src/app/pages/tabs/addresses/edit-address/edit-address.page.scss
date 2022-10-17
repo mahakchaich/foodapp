@@ -1,21 +1,21 @@
-ion-toolbar{
+ion-toolbar {
     --background: transparent;
     --ion-color-base: transparent !important;
 }
 
-.map{
+.map {
     height: 30vh;
 }
 
-ion-item{
+ion-item {
     align-items: center;
-    ion-button{
-        span{
-            color: var(--ion-color-primary)
+    ion-button {
+        span {
+            color: var(--ion-color-primary);
         }
     }
-    ion-label{
-        span{
+    ion-label {
+        span {
             font-size: 0.8rem;
         }
     }

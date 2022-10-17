@@ -1,12 +1,14 @@
-import { Component, OnInit, ViewChild } from '@angular/core';
-import { Router } from '@angular/router';
+import { Component, OnDestroy, OnInit, ViewChild } from '@angular/core';
+import { NavigationExtras, Router } from '@angular/router';
 import { Preferences } from '@capacitor/preferences';
 import { IonContent, NavController } from '@ionic/angular';
 import * as moment from 'moment';
 import { Subscription } from 'rxjs';
+import { SearchLocationComponent } from 'src/app/components/search-location/search-location.component';
 import { Address } from 'src/app/models/address.model';
 import { Cart } from 'src/app/models/cart.model';
 import { Order } from 'src/app/models/order.model';
+import { AddressService } from 'src/app/services/address/address.service';
 import { CartService } from 'src/app/services/cart/cart.service';
 import { GlobalService } from 'src/app/services/global/global.service';
 import { OrderService } from 'src/app/services/order/order.service';
@@ -16,7 +18,7 @@ import { OrderService } from 'src/app/services/order/order.service';
   templateUrl: './cart.page.html',
   styleUrls: ['./cart.page.scss'],
 })
-export class CartPage implements OnInit {
+export class CartPage implements OnInit , OnDestroy {
   @ViewChild(IonContent,{static : false}) content: IonContent;
   urlCheck: any;
   url: any;
@@ -25,15 +27,31 @@ export class CartPage implements OnInit {
   location= {} as Address ;
   deliveryCharge = 20;
   cartSub: Subscription;
+  addressSub: Subscription;
   constructor(
     private router: Router,
     private orderService: OrderService,
     private global: GlobalService,
     private navCtrl: NavController,
-    private cartService: CartService
+    private cartService: CartService,
+    private addressService: AddressService
   ) { }
 
-  ngOnInit() {
+  async ngOnInit() {
+    await this.getData();
+    this.addressSub =this.addressService.addressChange.subscribe(async(address) =>{
+      console.log('location cart:',address);
+      this.location = address;
+      if(this.location?.id && this.location?.id !== ''){
+        const raduis= this.addressService.redius;
+        const result= await this.cartService.checkCart(this.location.lat,this.location.lng,raduis);
+        console.log(result);
+        if(!result){
+          this.global.errorToast('Location is too far from the restaurant',5000);
+           this.cartService.clearCart();
+        }
+          }
+    });
     this.cartSub = this.cartService.cart.subscribe(cart => {
        this.model = cart;
        if(!this.model) {this.location = {} as Address ;}
@@ -52,16 +70,16 @@ export class CartPage implements OnInit {
     //   userid: 'user1',
 
     // };
-    this.location = new Address(
-      'address1',
-      'userid1',
-      'Address 1',
-      'ouardanine, monastir',
-      '',
-      '',
-      28.653831,
-      77.188257,
-    );
+    // this.location = new Address(
+    //   'address1',
+    //   'userid1',
+    //   'Address 1',
+    //   'ouardanine, monastir',
+    //   '',
+    //   '',
+    //   28.653831,
+    //   77.188257,
+    // );
     await this.cartService.getCartData();
   }
 
@@ -93,8 +111,48 @@ export class CartPage implements OnInit {
     return this.url.join('/');
   }
 
-  addAddress(){}
-  changeAddress(){}
+  addAddress(location?){
+    let url: any;
+    let navData: NavigationExtras;
+    if(location){
+      location.from = 'cart';
+      navData = {
+        queryParams: {
+          data: JSON.stringify(location)
+        }
+      }
+    }
+    if(this.urlCheck === 'tabs'){
+      url = ['/','tabs','addresses','edit-address'];}
+    else{
+      url= [this.router.url,'addresses','edit-address'];
+    }
+    this.router.navigate(url, navData);
+
+  }
+
+
+   async changeAddress(){
+    try{
+      const options ={
+        component: SearchLocationComponent,
+        swipeToClose: true,
+        cssClass:'custom-modal',
+        componentProps:{
+          from: 'cart'
+        }
+      };
+      const address =await this.global.createModel(options);
+      if(address){
+        if(address === 'add'){ this.addAddress();}
+          await this.addressService.changeAddress(address);
+      }
+    }catch(e){
+      console.log(e);
+    }
+  }
+
+
  async  makePayment(){
    try{
     const data: Order ={
@@ -131,6 +189,16 @@ export class CartPage implements OnInit {
     if(this.model?.items && this.model?.items.length > 0) {
       this.cartService.saveCart();
     }
+  }
+
+  ngOnDestroy(){
+      console.log('Destroy cartPage');
+      if(this.addressSub){
+        this.addressSub.unsubscribe();
+      }
+      if(this.cartSub){
+        this.cartSub.unsubscribe();
+      }
   }
 }
 

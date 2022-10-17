@@ -17,6 +17,7 @@ export class MapComponent implements OnInit ,AfterViewInit,OnDestroy {
   marker: any;
   @Input() center ={lat:28.652571380345652  , lng:77.23231802197634};
   mapListener: any;
+  mapChange: Subscription;
   @Input() update = false
   @Output() location: EventEmitter<any> = new EventEmitter();
   constructor( private maps: GoogleMapsService,
@@ -26,8 +27,17 @@ export class MapComponent implements OnInit ,AfterViewInit,OnDestroy {
   ngOnInit() {
   }
 
-  ngAfterViewInit(){
-    this.loadMap();
+ async  ngAfterViewInit(){
+    await this.initMap();
+   this.mapChange= this.maps.markerChange.subscribe( async(loc) =>{
+      if(loc?.lat){
+        const goggleMaps= this.googleMaps;
+        const location = new goggleMaps.LatLng(loc.lat,loc.lng);
+        this.map.panTo(location);
+        this.marker.setMap(null);
+        await this.addMarker(location);
+      }
+    });
   }
 
   async initMap(){
@@ -39,13 +49,15 @@ export class MapComponent implements OnInit ,AfterViewInit,OnDestroy {
         lng: position.coords.longitude,
       };
       await this.loadMap();
-      // this.getAddress(this.center.lat,this.center.lng);
+      this.getAddress(this.center.lat,this.center.lng);
     }else{
-      this.loadMap();
+      await this.loadMap();
     }
     }catch(e){
       console.log(e);
+      this.center ={lat:28.652571380345652  , lng:77.23231802197634};
       this.loadMap();
+      this.getAddress(this.center.lat,this.center.lng);
     }
   }
 
@@ -111,7 +123,7 @@ export class MapComponent implements OnInit ,AfterViewInit,OnDestroy {
       const result = await this.maps.getAddress(lat,lng);
       console.log(result);
       const loc = {
-        location_name: result.address_components[0].short_name,
+        title: result.address_components[0].short_name,
         address: result.formatted_address,
         lat,
         lng,
@@ -124,8 +136,11 @@ export class MapComponent implements OnInit ,AfterViewInit,OnDestroy {
    }
 
    ngOnDestroy() {
-       if(!this.mapListener){
+       if(this.mapListener){
         this.googleMaps.event.removeListener(this.mapListener);
+       }
+       if(this.mapChange){
+        this.mapChange.unsubscribe();
        }
    }
 
