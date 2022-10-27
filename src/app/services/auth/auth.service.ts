@@ -1,6 +1,5 @@
 import { Injectable } from '@angular/core';
 import { AngularFireAuth } from '@angular/fire/compat/auth';
-import { AngularFirestore } from '@angular/fire/compat/firestore';
 import { User } from 'src/app/models/user.model';
 import { ApiService } from '../api/api.service';
 import { StorageService } from '../storage/storage.service';
@@ -13,7 +12,7 @@ export class AuthService {
   constructor(private storage: StorageService,
               private fireAuth: AngularFireAuth,
               private apiService: ApiService,
-              private adb: AngularFirestore) { }
+              ) { }
 
 
 async login(email: string,password: string): Promise<any>{
@@ -22,6 +21,8 @@ try{
   console.log(response);
   if(response.user){
     this.setUserData(response.user.uid);
+    const user: any =  await this.getUserData(response.user.uid);
+    return user.type;
   }
 }catch(e){
   throw(e);
@@ -37,7 +38,7 @@ setUserData(uid){
 }
 
 
-async register(formValue){
+async register(formValue,type?){
  try{
    const registeredUser= await this.fireAuth.createUserWithEmailAndPassword(formValue.email,formValue.password);
    console.log('registeruser',registeredUser);
@@ -50,7 +51,13 @@ async register(formValue){
     'active'
    );
    await this.apiService.collection('users').doc(registeredUser.user.uid).set(Object.assign({}, data));
-   await this.setUserData(registeredUser.user.uid);
+   if(!type || type !== 'restaurant'){
+    await this.setUserData(registeredUser.user.uid);}
+    const userData ={
+      id: registeredUser.user.uid,
+      type: type ? type : 'user'
+    };
+    return userData;
  }catch(e){
   throw(e);
  }
@@ -84,5 +91,42 @@ async updateEmail(oldEmail,newEmail,password){
     console.log(e);
     throw(e);
   }
+}
+
+checkAuth(): Promise<any> {
+  return new Promise((resolve, reject) => {
+    this.fireAuth.onAuthStateChanged(user => {
+      console.log('auth user: ', user);
+      resolve(user)
+      // if(user) {
+      //   this.setUserData(user.uid);
+      //   resolve(user.uid);
+      // } else {
+      //   // this.logout();
+      //   reject(false);
+      // }
+    });
+  });
+}
+
+
+async checkUserAuth() {
+  try {
+    const user = await this.checkAuth();
+    if(user) {
+      this.setUserData(user.uid);
+      const profile: any = await this.getUserData(user.uid);
+      if(profile) {return profile.type;}
+      return false;
+    } else {
+      return false;
+    }
+  } catch(e) {
+    throw(e);
+  }
+}
+
+async getUserData(id) {
+  return (await (this.apiService.collection('users').doc(id).get().toPromise())).data();
 }
 }

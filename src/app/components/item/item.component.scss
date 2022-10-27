@@ -31,9 +31,17 @@ ion-row{
 }
 
 ion-label{
-    font-size: 0.95rem !important;
+    ion-text{
+        font-size: 0.9rem !important;
+        font-weight: bold;
+    }
+      max-width: 70vw !important;
+   
     p{
-        font-size: 0.8rem !important;
+        font-size: 0.75rem !important;
+    }
+    ion-text,p{
+        max-width: 25vh !important;
     }
 }
 

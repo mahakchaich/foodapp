@@ -2,17 +2,18 @@
 .dotStyle{
     border: 1px solid var(--ion-color-success);
     padding: 0 0.1rem 0 0.1rem; //top right bottom left
-    margin-right: 2vw;
+    margin-right: 0.7vw;
 }
 ion-item{
     letter-spacing: 0.5px;
    
 }
 ion-text{
-    font-size: 0.8rem;
+    font-size: 0.8rem ;
 }
 ion-label{
-    font-size: 0.86rem;
+    font-size: 0.8rem !important;
+    font-weight: bold;
 }
 ion-row{
     border:1px solid var(--ion-color-medium);
@@ -20,9 +21,7 @@ ion-row{
     padding: 0.3rem;
     margin-right: 1vw;
 }
-h5{
-    font-weight: bold;
-}
+
 
 .quantity{
     width: 2rem;

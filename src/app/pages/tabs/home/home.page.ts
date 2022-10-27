@@ -20,7 +20,7 @@ import { LocationService } from 'src/app/services/location/location.service';
 })
 export class HomePage implements OnInit ,OnDestroy {
   banners: any[]=[];
-  restaurants: Restaurant[]=[];
+  restaurants: Restaurant[] = [];
   isLoading: boolean ;
   location = {} as Address;
   addressSub: Subscription;
@@ -29,7 +29,8 @@ export class HomePage implements OnInit ,OnDestroy {
                private global: GlobalService,
                private mapService: GoogleMapsService,
                private locationService: LocationService,
-               private router: Router) { }
+               private router: Router,
+               private apiService: ApiService) { }
 
   ngOnInit() {
     this.addressService.addressChange.subscribe(address =>{
@@ -58,13 +59,25 @@ export class HomePage implements OnInit ,OnDestroy {
 
 
   getBanners() {
-    this.banners = this.api.banners;
+    // this.banners = this.api.banners;
+    this.apiService.getBanners().then(data=>{
+      this.banners = data;
+    })
+    .catch(e=>{
+      console.log(e);
+    });
   }
 
-  nearbyApiCall(){
+  async nearbyApiCall(){
+    try{
     console.log(this.location);
     this.isLoading= false;
-    this.restaurants=this.api.restaurants;
+    this.restaurants = await this.api.getNearbyRestaurants(this.location.lat,this.location.lng);
+    console.log(this.restaurants);
+    }catch(e){
+      console.log(e);
+      this.global.errorToast();
+    }
   }
 
 
@@ -77,9 +90,8 @@ export class HomePage implements OnInit ,OnDestroy {
       this.location = new Address(
         '',
         '',
-        address.address_components[0].short_name,
+        address.address_components[0].shortname,
         address.formatted_address,
-        '',
         '',
         latitude,
         longitude,
@@ -100,11 +112,7 @@ export class HomePage implements OnInit ,OnDestroy {
   async getData(){
     try{
       this.restaurants=[];
-      // const address = await this.addressService.checkExistAddress(lat,lng,this.location);
-      const address = await this.addressService.checkExistAddress(this.location);
-      console.log('address change',address);
-      // if(!address){await this.nearbyApiCall(lat,lng);}
-
+      await this.addressService.checkExistAddress(this.location);
     }catch(e){
       console.log(e);
       this.global.errorToast();

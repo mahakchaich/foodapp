@@ -39,14 +39,14 @@ export class CartPage implements OnInit , OnDestroy {
 
   async ngOnInit() {
     await this.getData();
-    this.addressSub =this.addressService.addressChange.subscribe(async(address) =>{
-      console.log('location cart:',address);
+    this.addressSub = this.addressService.addressChange.subscribe(async (address) => {
+      console.log('location cart: ', address);
       this.location = address;
-      if(this.location?.id && this.location?.id !== ''){
-        const raduis= this.addressService.redius;
-        const result= await this.cartService.checkCart(this.location.lat,this.location.lng,raduis);
+      if(this.location?.id && this.location?.id !== '') {
+        const radius = this.orderService.getRadius();
+        const result = await this.cartService.checkCart(this.location.lat, this.location.lng, radius);
         console.log(result);
-        if(!result){
+        if(result){
           this.global.errorToast('Location is too far from the restaurant',5000);
            this.cartService.clearCart();
         }
@@ -63,23 +63,6 @@ export class CartPage implements OnInit , OnDestroy {
 
   async getData(){
     await this.checkUrl();
-    // this.location = {
-    //   lat: 28.653831,
-    //   lng: 77.188257,
-    //   address: 'Karol Bagh, New Delhi',
-    //   userid: 'user1',
-
-    // };
-    // this.location = new Address(
-    //   'address1',
-    //   'userid1',
-    //   'Address 1',
-    //   'ouardanine, monastir',
-    //   '',
-    //   '',
-    //   28.653831,
-    //   77.188257,
-    // );
     await this.cartService.getCartData();
   }
 

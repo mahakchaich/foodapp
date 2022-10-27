@@ -20,6 +20,11 @@
       <p>Discover unique tastes near you</p>
     </ion-label>
   </ion-list-header>
+
+  <ion-text *ngIf="restaurants?.length === 0" color="danger" class="ion-text-center">
+    <p>No Restaurants found near you</p>
+  </ion-text>
+
 <ion-item-group *ngIf="restaurants?.length > 0">
   <app-restaurant *ngFor="let restaurant of restaurants" [restaurant]="restaurant" [routerLink]="['/','tabs','restaurants',restaurant.uid]"></app-restaurant>
 </ion-item-group>

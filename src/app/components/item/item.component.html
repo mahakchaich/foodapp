@@ -1,10 +1,10 @@
 <ion-item >
   <ion-thumbnail slot="start">
-    <img [src]="item?.cover ? item.cover : 'assets/imgs/1.jpg'"/>
+    <img [src]="item?.cover ? item?.cover : fallbackImage" (error)="onImgError($event)"/>
   </ion-thumbnail>
-  <ion-label>
-    <h4>{{item?.name}}</h4>
-    <p class="ion-text-wrap">{{item?.desc}}</p>
+  <ion-label class="ion-text-wrap">
+    <ion-text>{{item?.name}}</ion-text>
+    <p>{{item?.description}}</p>
     <ion-text><p>{{item?.price| number:'0.2-2'}}</p></ion-text>
   </ion-label>
 

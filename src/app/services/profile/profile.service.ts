@@ -40,18 +40,23 @@ export class ProfileService {
   }
 
   async getProfile(){
-    const uid =await this.authService.getId();
-    const profile: any =( await (this.apiService.collection('users').doc(uid).get().toPromise())).data();
-    console.log('profile:',profile);
-    const data = new User(
-        profile.email,
-        profile.snapshotChanges,
-        profile.name,
-        uid,
-        profile.type,
-        profile.status,
-    );
-    this._profile.next(profile);
+    try{
+      const uid =await this.authService.getId();
+      const profile: any =( await (this.apiService.collection('users').doc(uid).get().toPromise())).data();
+      console.log('profile:',profile);
+      const data = new User(
+          profile.email,
+          profile.snapshotChanges,
+          profile.name,
+          uid,
+          profile.type,
+          profile.status,
+      );
+      this._profile.next(data);
+      return data;
+    }catch(e){
+      throw(e);
+    }
   }
 
   async updateProfileWithEmail(profile, param, password) {

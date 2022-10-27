@@ -1,14 +1,18 @@
-import { Component, OnInit, ViewChild } from '@angular/core';
+import { Component, OnDestroy, OnInit, ViewChild } from '@angular/core';
 import { element } from 'protractor';
+import { combineLatest, Subject, Subscription } from 'rxjs';
+import { take } from 'rxjs/operators';
 import { Restaurant } from 'src/app/models/restaurant.model';
+// import { AddressService } from 'src/app/services/address/address.service';
 import { ApiService } from 'src/app/services/api/api.service';
+import { GlobalService } from 'src/app/services/global/global.service';
 
 @Component({
   selector: 'app-search',
   templateUrl: './search.page.html',
   styleUrls: ['./search.page.scss'],
 })
-export class SearchPage implements OnInit {
+export class SearchPage implements OnInit , OnDestroy {
   @ViewChild('searchInput') sInput;
   model: any = {
     icon: 'search-outline',
@@ -16,31 +20,81 @@ export class SearchPage implements OnInit {
   };
   query: any;
   isLoading: boolean;
-  allRestaurants: Restaurant[] = [];
   restaurants: any[]=[];
-  constructor( private api: ApiService) { }
+  startAt = new Subject();
+  endAt = new Subject();
+  querySub: Subscription;
+  addressSub: Subscription;
+  location: any = {};
+
+  startObs = this.startAt.asObservable();
+  endObs = this.endAt.asObservable();
+  constructor( private api: ApiService,
+               private global: GlobalService,
+               ) { }
 
   ngOnInit() {
     setTimeout(()=>{
-      this.allRestaurants = this.api.allRestaurants;
       this.sInput.setFocus();
     },500);
+    this.querySub = combineLatest(this.startObs,this.endObs).subscribe(val =>{
+      console.log(val);
+      this.queryResults(val[0],val[1]);
+    });
+    // this.addressService.addressChange.subscribe(address =>{
+    //   if(address && address?.lat){
+    //     this.location= address;
+    //   if(this.query?.length> 0){
+    //     this.querySerach();
+    //   }
+    //   }
+    // },e=>{
+    //   console.log(e);
+    //   this.isLoading = false;
+    //   this.global.errorToast();
+    // }
+    // );
   }
+
+  queryResults(start, end) {
+    this.isLoading=true;
+    this.api.collection('restaurants', ref => ref.orderBy('short_name').startAt(start).endAt(end))
+      .valueChanges()
+      .pipe(take(1))
+      .subscribe((data: any) => {
+        this.restaurants = data;
+        this.isLoading = false;
+      }, e => {
+        this.isLoading = false;
+        console.log(e);
+        this.global.errorToast();
+      });
+  }
+
+
+
   async onSearchChange(event){
     console.log(event.detail.value);
     this.query=event.detail.value.toLowerCase();
+    this.querySerach();
+    }
+
+
+  querySerach(){
     this.restaurants = [];
     if(this.query.length > 0){
-      this.isLoading=true;
-    setTimeout(async ()=>{
-      this.restaurants =await this.allRestaurants.filter((element: any) => {
-        return element.shortname.includes(this.query); 
-      });
-      console.log(this.restaurants);
-      this.isLoading=false;
-    },3000);
+      this.startAt.next(this.query);
+      this.endAt.next(this.query + '\uf8ff');
     }
-    }
+  }
+
+  ngOnDestroy(){
+    if(this.querySub){
+      this.querySub.unsubscribe();}
+    // if(this.addressSub){
+    //   this.addressSub.unsubscribe();
+    // }
+  }
   }
 
 

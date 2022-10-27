@@ -21,17 +21,18 @@
 <app-empty-screen [model]="model" *ngIf="!isLoading && categories?.length === 0"></app-empty-screen>
 
 <ion-list lines="none" *ngFor="let category of categories">
-  <ion-list-header>
+  <ion-list-header *ngIf="checkItemCategory(category.id)">
     {{category?.name}}
   </ion-list-header>
-  <ng-container *ngFor="let item of items;let i =index">
-   <app-item *ngIf="category.id === item.categoryid"
+  <ng-container *ngFor="let item of items; let i = index">
+    <app-item 
+      *ngIf="category.id === item.categoryid.id"
       [item]="item"
       [index]="i"
       (add)="quantityPlus($event)"
-      (minus)="quantityMinus($event)"></app-item>
+      (minus)="quantityMinus($event)">
+    </app-item>
   </ng-container>
- 
 </ion-list>
 
 </ion-content>

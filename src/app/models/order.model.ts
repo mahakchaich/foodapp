@@ -7,17 +7,18 @@ export class Order{
 
         public address: Address,
         public restaurant: Restaurant,
+        public restaurantid: string,
         public order: Item[],
-        public paid: string,
+        public total: number,
         public grandTotal: number,
         public deliveryCharge: number,
         public status: string,
         public time: string,
-        public total: number,
-        public restaurantid: string,
-        public instruction?: string,
-        public userid?: string,
+        public paid: string,
         public id?: string,
+        public uid?: string,
+        public instruction?: string,
+
 
     ){}
 }

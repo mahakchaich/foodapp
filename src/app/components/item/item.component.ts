@@ -8,6 +8,7 @@ import { Item } from 'src/app/models/item.model';
 })
 export class ItemComponent implements OnInit {
 
+  fallbackImage ='assets/imgs/1.jpg';
   @Input() item: Item;
   @Input() index: any;
   @Output() add: EventEmitter<Item> = new EventEmitter();
@@ -22,6 +23,8 @@ export class ItemComponent implements OnInit {
   quantityMinus(){
     this.minus.emit(this.item);
   }
-
+  onImgError(event){
+    event.target.src =this.fallbackImage;
+  }
 
 }

@@ -1,17 +1,17 @@
-export class Item{
+export class Item {
     constructor(
         public id: string,
         public uid: string,
-        public categoryid: string,
+        public categoryid: any,
         public cover: string,
-        public desc: string,
         public name: string,
+        public description: string,
         public price: number,
-        public rating: number,
+        public veg: boolean,
         public status: boolean,
         public variation: boolean,
-        public veg: boolean,
-        public quantity?: number,
-    ){}
-}
+        public rating: number,
+        public quantity?: number
+    ) {}
 
+}
