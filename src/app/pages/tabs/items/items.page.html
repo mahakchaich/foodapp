@@ -39,7 +39,7 @@
 <ion-footer *ngIf="cartData?.totalItem > 0">
   <ion-toolbar color="success">
     <ion-label color="white">
-      <h4 >{{cartData?.totalItem}} Item <span *ngIf="cartData?.totalItem > 1">s</span> | ${{cartData?.totalPrice | number: '0.2-2'}}</h4>
+      <h4 >{{cartData?.totalItem}} Item <span *ngIf="cartData?.totalItem > 1">s</span> | {{cartData?.totalPrice | number: '0.2-2'}} dt</h4>
       <ion-text color="light">
         <p>Extra Charges may applay</p>
       </ion-text>

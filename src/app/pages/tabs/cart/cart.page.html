@@ -38,19 +38,19 @@
   
     <ion-list class="borderBottom">
       <ion-list-header>
-        <ion-label color="tertiary">Bill Details</ion-label>
+        <ion-label color="tertiary">Details</ion-label>
       </ion-list-header>
       <ion-item lines="none">
         <ion-label color="dark">Item Total</ion-label>
-        <ion-text slot="end" color="dark">₹{{model?.totalPrice | number : '0.2-2'}}</ion-text>
+        <ion-text slot="end" color="dark">{{model?.totalPrice | number : '0.2-2'}}dt</ion-text>
       </ion-item>
       <ion-item lines="full">
         <ion-label color="dark">Delivery fee</ion-label>
-        <ion-text slot="end" color="dark">₹{{model?.deliveryCharge | number : '0.2-2'}}</ion-text>
+        <ion-text slot="end" color="dark">{{model?.deliveryCharge | number : '0.2-2'}}dt</ion-text>
       </ion-item>
       <ion-item lines="none">
         <ion-label color="dark">To Pay</ion-label>
-        <ion-text slot="end" color="dark"><h5>₹{{model?.grandTotal | number : '0.2-2'}}</h5></ion-text>
+        <ion-text slot="end" color="dark"><h5>{{model?.grandTotal | number : '0.2-2'}}dt</h5></ion-text>
       </ion-item>
     </ion-list>
   </ng-container>
@@ -92,9 +92,9 @@
       <ion-col size="6" class="ion-no-padding" (click)="scrollToBottom()">
         <ion-item lines="none" color="light" class="ion-no-padding">
           <ion-label>
-            <h6>₹{{model?.grandTotal | number : '0.2-2'}}</h6>
+            <h6>{{model?.grandTotal | number : '0.2-2'}}DT</h6>
             <ion-text color="secondary">
-              VIEW DETAILED BILL
+              VIEW DETAILED 
               <ion-icon name="chevron-down-outline"></ion-icon>
             </ion-text>
           </ion-label>

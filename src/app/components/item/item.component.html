@@ -5,7 +5,7 @@
   <ion-label class="ion-text-wrap">
     <ion-text>{{item?.name}}</ion-text>
     <p>{{item?.description}}</p>
-    <ion-text><p>{{item?.price| number:'0.2-2'}}</p></ion-text>
+    <ion-text><p>{{item?.price| number:'0.2-2'}}dt</p></ion-text>
   </ion-label>
 
   <ion-row *ngIf="!item?.quantity || item?.quantity <= 0" (click)="quantityPlus()">
